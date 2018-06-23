@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    #map {
+      /*因为子元素的位置是随机的,采用的是绝对定位,因此,父元素采用的是相对定位*/
+      position: relative;
+      width: 800px;
+      height: 600px;
+      background-color: hotpink;
+    }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="food.js"></script>
+<script src="snake.js"></script>
+<script src="Game.js"></script>
+<script>
+  var map = document.getElementById('map');
+
+  //食物的属性 Food
+  // x
+  // y
+  // width
+  // height
+  //bgColor
+  //食物的方法:
+  // render 渲染食物在页面的方法
+  //  function Food(options) {
+  //    options = options || {}
+  //    this.x = options.x || 0
+  //    this.y = options.y || 0
+  //    this.width = options.width || 20
+  //    this.height = options.height || 20
+  //    this.bgColor = options.bgColor || 'green'
+  //  }
+  //  Food.prototype.render = function () {
+  //    var foodElement = document.createElement('div')
+  //    foodElement.style.width = this.width + 'px'
+  //    foodElement.style.height = this.height + 'px'
+  //    foodElement.style.backgroundColor = this.bgColor
+  //    foodElement.style.position = 'absolute'
+  //
+  //    this.x = parseInt(Math.random() * (map.offsetWidth / this.width))
+  //    this.y = parseInt(Math.random() * (map.offsetHeight / this.height))
+  //
+  //    foodElement.style.left = this.x*this.width + 'px'
+  //    foodElement.style.top = this.y *this.height+ 'px'
+  //    map.appendChild(foodElement)
+  //  }
+  //  var food = new Food()
+  //  food.render(map)
+
+  //创建snake 对象
+  //分析
+  //属性
+  //1.蛇节的宽度
+  //2.蛇节的高度
+  //3.蛇头的颜色 headColor
+  //4.蛇身的颜色 bodyColor
+  //5.蛇 body :[ {x:2,y:0},{x:1,y:0},{x:0,y:0}]
+
+  //方法:
+  //render
+  //move
+  //  function Snake(options) {
+  //    options = options || {}
+  //    this.width = options.width || 20
+  //    this.height = options.height || 20
+  //    this.headColor = options.headColor || 'red'
+  //    this.bodyColor = options.bodyColor || 'blue'
+  //    this.direction = 'right'
+  //    this.body = [
+  //      {x: 2, y: 0},
+  //      {x: 1, y: 0},
+  //      {x: 0, x: 0}
+  //    ]
+  //  }
+  //  Snake.prototype.render = function (target) {
+  //    for (var i = 0; i < this.body.length; i++) {
+  //      var span = document.createElement('span')
+  //      span.style.width = this.width + 'px'
+  //      span.style.height = this.height + 'px'
+  //      if (i === 0) {
+  //        span.style.backgroundColor = this.headColor
+  //      } else {
+  //        span.style.backgroundColor = this.bodyColor
+  //      }
+  //      span.style.position = 'absolute'
+  //      span.style.left = this.body[i].x * this.width + 'px'
+  //      span.style.top = this.body[i].y * this.height + 'px'
+  //      target.appendChild(span)
+  //    }
+  //  }
+  //  Snake.prototype.move = function (target) {
+  //    var newNode = {
+  //      x: this.body[0].x,
+  //      y: this.body[0].y
+  //    }
+  //
+  //    switch (this.direction) {
+  //      case 'right':
+  //        newNode.x++
+  //        break
+  //      case 'left':
+  //        newNode.x++
+  //        break
+  //      case 'up':
+  //        newNode.y--
+  //        break
+  //      case 'down':
+  //        newNode.y++
+  //        break
+  //    }
+  //    this.body.unshift(newNode)
+  //    this.body.pop()
+  //    this.render(target)
+  //    var spans = document.querySelectorAll('span')
+  ////  console.log(spans);
+  //    for (var i = 0; i < spans.length; i++) {
+  //      target.removeChild(spans[i])
+  //    }
+  //    this.render(target)
+  //  }
+  //Gamed对象
+
+  // 1 创建构造函数
+  //  function Game(map) {
+  //    //添加食物对象
+  //    this.food = new Food()
+  //    // 添加蛇对象
+  //    this.snake = new Snake()
+  ////    console.log(this.snake);
+  //    //添加地图
+  //    this.map = map
+  //  }
+  //  // 2 给原型对象中添加 开始有游戏 的方法
+  //  Game.prototype.start = function () {
+  //    //将this 存储到一个变量中, 目的是为了在定时器函数内部获取这个this
+  //    var that = this
+  //    // 让游戏开始要做什么???
+  //    //1 渲染食物
+  //    this.food.render(this.map)
+  //    //2 渲染蛇
+  //    this.snake.render(this.map)
+  //    // 2.1 给document 判定按键事件, 来监听 上下左右 方向键按下的事件
+  //    document.addEventListener('keyup', function (event) {
+  //      //如何获取 当前的键值???
+  //      //通过事对象 event 来获取
+  ////      console.log(event.keyCode);
+  //      switch (event.keyCode) {
+  //        case 38:
+  //          //上
+  //          //判断方向是不是与当前相反 , 如果相反 ,就不执行如何错误
+  //          if (that.snake.direction === 'down') {
+  //            return
+  //          }
+  //          that.snake.direction = 'up'
+  //          break
+  //        case 40:
+  //          //下
+  //          if (that.snake.direction === 'up') {
+  //            return
+  //          }
+  //          that.snake.direction = 'down'
+  //          break
+  //        case 39:
+  //          //右
+  //          if (that.snake.direction === 'left') {
+  //            return
+  //          }
+  //          that.snake.direction = 'right'
+  //          break
+  //        case 37:
+  //          //左
+  //          if (that.snake.direction === 'right'){
+  //            return
+  //          }
+  //          that.snake.direction = 'left'
+  //          break
+  //      }
+  //    })
+  //    // 3 让蛇动起来
+  //    // 注意 : 每一函数都有自己的this
+  //    //        定时器中的this 是 :window
+  //    //         如何在定时器内部,获取到外部的this? 通过一个中间变量that获取
+  //    var timeId = setInterval(function () {
+  ////    that.snake.move(this.map)
+  //      that.snake.move(that.map, that.food)//!!!
+  //      //判断蛇有没有撞墙
+  //      // 1 获取到蛇头坐标
+  //      var head = that.snake.body[0]
+  //      // 2 分别判断上下左右四个边有没有撞墙,如果撞墙了提示游戏结束,并且提示清除定时器
+  //      if (head.x < 0 || head.y < 0 || head.x > ((that.map.offsetWidth / that.snake.width) - 1) || head.y > ((that.map.offsetHeight / that.snake.height) - 1)) {
+  //        alert('Game Over,游戏结束^_^')
+  //        //清除定时器
+  //        clearInterval(timeId)
+  //      }
+  //    }, 200)
+  //    //
+  //  }
+  var g = new Game(map)
+  g.start()
+
+  //  console.log(g);
+</script>
+
+
+</body>
+</html>
